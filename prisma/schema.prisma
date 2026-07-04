@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum EventLevel {
+  LOCAL
+  REGIONAL
+  NATIONAL
+  MAJOR
+  INTERNATIONAL
+  UNKNOWN
+}
+
+enum GeocodeSource {
+  POSTCODES_IO
+  NOMINATIM
+  MANUAL
+}
+
+model Association {
+  id        String   @id @default(cuid())
+  code      String   @unique
+  name      String
+  events    Event[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Club {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  events    Event[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  // British Orienteering's own fixture id — natural key so re-ingestion upserts cleanly
+  bofNumber     String   @unique
+  title         String
+  date          DateTime
+  level         EventLevel @default(UNKNOWN)
+  levelRaw      String?
+  venue         String?
+  nearestTown   String?
+  eventWebsite  String?
+
+  associationId String?
+  association   Association? @relation(fields: [associationId], references: [id])
+  clubId        String?
+  club          Club?        @relation(fields: [clubId], references: [id])
+
+  latitude      Float?
+  longitude     Float?
+  geocodeSource GeocodeSource?
+  geocodedAt    DateTime?
+
+  rawPayload    Json?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([date])
+  @@index([level])
+  @@index([associationId])
+  @@index([latitude, longitude])
+}
+
+// Cache of geocoded place lookups so re-ingestion never re-geocodes an unchanged
+// venue string (keeps us well within Nominatim's rate-limit/caching policy).
+model GeocodeCache {
+  id        String        @id @default(cuid())
+  queryText String        @unique
+  source    GeocodeSource
+  latitude  Float
+  longitude Float
+  raw       Json?
+  createdAt DateTime      @default(now())
+}
