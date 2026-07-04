@@ -38,12 +38,8 @@ upserts everything into Postgres keyed by British Orienteering's own fixture
 number — safe to re-run on a schedule.
 
 This needs normal internet access to `britishorienteering.org.uk`,
-`api.postcodes.io`, and `nominatim.openstreetmap.org`. Run it:
-
-- **Locally**, on a machine with normal internet access.
-- **On a schedule**, e.g. a GitHub Actions workflow (`schedule: cron`) that
-  runs `pnpm ingest` against your production `DATABASE_URL`, or a cron job on
-  a small VM.
+`api.postcodes.io`, and `nominatim.openstreetmap.org`. Run it locally, or let
+`.github/workflows/ingest.yml` run it daily in CI (see Deploying below).
 
 For an offline dry run of the normalize → geocode → upsert pipeline against
 local fixture data (useful in network-restricted environments), run:
@@ -56,6 +52,36 @@ Geocoding calls will no-op gracefully (events just end up without
 coordinates) if `api.postcodes.io` / `nominatim.openstreetmap.org` aren't
 reachable — it never overwrites existing coordinates on failure, so it's
 always safe to re-run.
+
+## Deploying (Vercel + Neon, via GitHub Actions)
+
+`.github/workflows/deploy.yml` builds and deploys the app to Vercel on every
+push to `main` (or manually via the Actions tab's "Run workflow" button).
+`.github/workflows/ingest.yml` runs `pnpm ingest` daily to keep the DB fresh.
+One-time setup:
+
+1. **Database** — create a [Neon](https://neon.tech) Postgres project and
+   copy its connection string.
+2. **Vercel project** — create a Vercel project for this repo (via the
+   dashboard's "Import Project", or `vercel link` locally). Either way, do
+   **not** enable Vercel's own Git integration for this repo if you want
+   GitHub Actions to be the thing that triggers deploys — otherwise you'll
+   get two deploys per push, one from each. In the Vercel project's
+   **Settings → Environment Variables**, add `DATABASE_URL` (Production) so
+   the running app can reach Neon.
+3. **GitHub repo secrets** (Settings → Secrets and variables → Actions):
+   - `DATABASE_URL` — same Neon connection string as above (used by CI to run
+     migrations and, daily, `pnpm ingest`).
+   - `VERCEL_TOKEN` — from Vercel → Account Settings → Tokens.
+   - `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` — from the project's
+     Settings → General page, or the `.vercel/project.json` created by
+     running `vercel link` locally once.
+   - Optionally, a repo **variable** (not secret) `NOMINATIM_USER_AGENT` with
+     a real contact email, per Nominatim's usage policy.
+4. Push to `main` (or run the "Deploy to Vercel" workflow manually) —
+   it applies pending migrations (`prisma migrate deploy`) and deploys.
+5. Run the "Ingest fixtures" workflow manually once after the first deploy
+   to populate real data (it otherwise runs daily on its own).
 
 ## Project structure
 
