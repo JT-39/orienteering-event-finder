@@ -48,7 +48,8 @@ export async function fetchAllFixturesByAssociation(assocCodes: string[]): Promi
   for (const code of assocCodes) {
     const fixtures = await fetchFixturesFor(code);
     for (const fixture of fixtures) {
-      if (!byNumber.has(fixture.number)) byNumber.set(fixture.number, fixture);
+      const key = String(fixture.number);
+      if (!byNumber.has(key)) byNumber.set(key, fixture);
     }
   }
 

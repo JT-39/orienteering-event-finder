@@ -18,19 +18,20 @@ const LEVEL_LOOKUP: Record<string, EventLevel> = {
   d: EventLevel.LOCAL,
 };
 
-export function parseLevel(raw: string | null | undefined): EventLevel {
-  if (!raw) return EventLevel.UNKNOWN;
-  const key = raw.trim().toLowerCase();
-  return LEVEL_LOOKUP[key] ?? EventLevel.UNKNOWN;
+export function parseLevel(raw: unknown): EventLevel {
+  const cleaned = cleanString(raw);
+  if (!cleaned) return EventLevel.UNKNOWN;
+  return LEVEL_LOOKUP[cleaned.toLowerCase()] ?? EventLevel.UNKNOWN;
 }
 
 /**
  * BOF's feed hasn't published a guaranteed date format, so this tries the
  * formats known to show up in UK fixture feeds before giving up.
  */
-export function parseFixtureDate(raw: string | null | undefined): Date | null {
-  if (!raw) return null;
-  const trimmed = raw.trim();
+export function parseFixtureDate(raw: unknown): Date | null {
+  const cleaned = cleanString(raw);
+  if (!cleaned) return null;
+  const trimmed = cleaned;
 
   const isoAttempt = new Date(trimmed);
   if (!Number.isNaN(isoAttempt.getTime()) && /^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
@@ -49,8 +50,13 @@ export function parseFixtureDate(raw: string | null | undefined): Date | null {
   return Number.isNaN(fallback.getTime()) ? null : fallback;
 }
 
-function cleanString(value: string | null | undefined): string | null {
-  const trimmed = value?.trim();
+/** BOF's feed doesn't reliably send every field as a string (e.g. `number`
+ * has been observed coming through as a JSON number) — coerce defensively
+ * rather than trust the declared type, since that's only a compile-time
+ * assumption, not a runtime guarantee for an external feed. */
+function cleanString(value: unknown): string | null {
+  if (value == null) return null;
+  const trimmed = String(value).trim();
   return trimmed ? trimmed : null;
 }
 
