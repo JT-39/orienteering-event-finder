@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm exec tsc --noEmit *)",
+      "Bash(pnpm exec eslint . *)",
+      "Bash(pnpm build *)",
+      "mcp__github__pull_request_read",
+      "mcp__github__get_job_logs"
+    ]
+  }
+}
