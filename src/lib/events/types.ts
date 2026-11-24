@@ -7,6 +7,7 @@ export interface EventFilters {
   associationCodes?: string[];
   q?: string;
   near?: { lat: number; lng: number; radiusKm: number };
+  sort?: "date" | "distance";
   page?: number;
   pageSize?: number;
 }

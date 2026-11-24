@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { CalendarDays, MapPin, ExternalLink, ArrowLeft, Users } from "lucide-react";
+import { CalendarDays, MapPin, ExternalLink, Users } from "lucide-react";
 import { EventMap } from "@/components/map/EventMap";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
+import { BackToEventsLink } from "@/components/events/BackToEventsLink";
 import { LEVEL_BADGE_CLASS, LEVEL_LABEL } from "@/lib/events/levelStyles";
 import type { EventCardData } from "@/components/events/EventCard";
 
@@ -12,13 +12,7 @@ export function EventDetail({ event }: { event: EventCardData }) {
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       <div>
-        <Link
-          href="/"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm text-foreground/60 hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" />
-          Back to all events
-        </Link>
+        <BackToEventsLink />
 
         <div className="flex items-start justify-between gap-3">
           <h1 className="text-2xl font-semibold leading-tight">{event.title}</h1>

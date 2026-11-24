@@ -61,8 +61,13 @@ export async function getEvents(filters: EventFilters) {
       ...e,
       distanceKm: haversineDistanceKm(filters.near!, { lat: e.latitude!, lng: e.longitude! }),
     }))
-    .filter((e) => e.distanceKm <= filters.near!.radiusKm)
-    .sort((a, b) => a.distanceKm - b.distanceKm);
+    .filter((e) => e.distanceKm <= filters.near!.radiusKm);
+
+  if (filters.sort === "date") {
+    withDistance.sort((a, b) => a.date.getTime() - b.date.getTime());
+  } else {
+    withDistance.sort((a, b) => a.distanceKm - b.distanceKm);
+  }
 
   const total = withDistance.length;
   const paged = withDistance.slice((page - 1) * pageSize, page * pageSize);

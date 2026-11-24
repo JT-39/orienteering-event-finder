@@ -73,6 +73,30 @@ export function LocationFilter() {
     setQuery("");
   }
 
+  /** Lets Enter submit immediately rather than forcing a dropdown pick —
+   * uses the top suggestion already loaded, or fetches fresh if the debounce
+   * hasn't resolved yet (e.g. the user typed and hit Enter quickly). */
+  async function handleSubmit() {
+    if (query.trim().length < 2) return;
+
+    if (suggestions.length > 0) {
+      const first = suggestions[0];
+      goToLocation(first.latitude, first.longitude, first.label);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/geocode/search?q=${encodeURIComponent(query)}`);
+      const body = await res.json();
+      const results: Suggestion[] = body.results ?? [];
+      if (results.length > 0) {
+        goToLocation(results[0].latitude, results[0].longitude, results[0].label);
+      }
+    } catch {
+      // network hiccup — leave the input as-is, user can retry
+    }
+  }
+
   function useMyLocation() {
     if (!navigator.geolocation) return;
     setLocating(true);
@@ -122,6 +146,12 @@ export function LocationFilter() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => suggestions.length > 0 && setOpen(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSubmit();
+              }
+            }}
             placeholder="Postcode or town…"
             className="w-40 rounded-lg border border-black/10 bg-white px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-white/10 dark:bg-white/5"
           />

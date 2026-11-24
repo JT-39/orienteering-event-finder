@@ -2,6 +2,7 @@ import { EventList } from "@/components/events/EventList";
 import { EventMap } from "@/components/map/EventMap";
 import { ViewToggle } from "@/components/view/ViewToggle";
 import { FilterBar } from "@/components/filters/FilterBar";
+import { SortControl } from "@/components/filters/SortControl";
 import { getEvents, getAssociations } from "@/lib/events/queries";
 import { parseEventSearchParams, type EventSearchParams } from "@/lib/events/filterParams";
 import type { EventCardData } from "@/components/events/EventCard";
@@ -42,7 +43,10 @@ export default async function HomePage({
         <p className="text-sm text-foreground/60">
           {total} matching event{total === 1 ? "" : "s"}
         </p>
-        <ViewToggle current={activeView} />
+        <div className="flex items-center gap-3">
+          {filters.near && <SortControl />}
+          <ViewToggle current={activeView} />
+        </div>
       </div>
       {activeView === "map" ? <EventMap events={eventData} /> : <EventList events={eventData} />}
     </main>
