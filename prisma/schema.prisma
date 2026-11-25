@@ -25,6 +25,11 @@ enum GeocodeSource {
   MANUAL
 }
 
+enum EventSource {
+  BOF
+  CLUB_ICS
+}
+
 model Association {
   id        String   @id @default(cuid())
   code      String   @unique
@@ -44,8 +49,13 @@ model Club {
 
 model Event {
   id            String   @id @default(cuid())
-  // British Orienteering's own fixture id — natural key so re-ingestion upserts cleanly
-  bofNumber     String   @unique
+  // British Orienteering's own fixture id — natural key so re-ingestion upserts cleanly.
+  // Nullable because club-feed (CLUB_ICS) events have no BOF fixture number.
+  bofNumber     String?  @unique
+  // Natural key for club-feed events, namespaced per feed (e.g. "SLOW:<uid>")
+  // so two clubs' UIDs can't collide. Null for BOF-sourced events.
+  icsUid        String?  @unique
+  source        EventSource @default(BOF)
   title         String
   date          DateTime
   level         EventLevel @default(UNKNOWN)
@@ -73,6 +83,7 @@ model Event {
   @@index([level])
   @@index([associationId])
   @@index([latitude, longitude])
+  @@index([source])
 }
 
 // Cache of geocoded place lookups so re-ingestion never re-geocodes an unchanged

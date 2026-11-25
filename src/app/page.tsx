@@ -26,6 +26,7 @@ export default async function HomePage({
     title: e.title,
     date: e.date,
     level: e.level,
+    source: e.source,
     venue: e.venue,
     nearestTown: e.nearestTown,
     club: e.club,

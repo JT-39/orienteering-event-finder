@@ -12,8 +12,7 @@ export interface EventFilters {
   pageSize?: number;
 }
 
-export interface NormalizedEvent {
-  bofNumber: string;
+interface NormalizedEventBase {
   title: string;
   date: Date;
   level: EventLevel;
@@ -25,3 +24,7 @@ export interface NormalizedEvent {
   clubName: string | null;
   rawPayload: unknown;
 }
+
+export type NormalizedEvent =
+  | (NormalizedEventBase & { source: "BOF"; bofNumber: string; icsUid: null })
+  | (NormalizedEventBase & { source: "CLUB_ICS"; bofNumber: null; icsUid: string });
