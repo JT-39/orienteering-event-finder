@@ -23,9 +23,15 @@ export function LocationFilter() {
 
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestionsQuery, setSuggestionsQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [locating, setLocating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const queryRef = useRef(query);
+
+  useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -49,6 +55,7 @@ export function LocationFilter() {
         });
         const body = await res.json();
         setSuggestions(body.results ?? []);
+        setSuggestionsQuery(query.trim());
         setOpen(true);
       } catch {
         // aborted or network hiccup — leave existing suggestions as-is
@@ -75,19 +82,24 @@ export function LocationFilter() {
 
   /** Lets Enter submit immediately rather than forcing a dropdown pick —
    * uses the top suggestion already loaded, or fetches fresh if the debounce
-   * hasn't resolved yet (e.g. the user typed and hit Enter quickly). */
+   * hasn't resolved yet (e.g. the user typed and hit Enter quickly). Guards
+   * against two staleness cases: already-loaded suggestions left over from
+   * a since-edited query, and a fresh fetch's response arriving after the
+   * user has already changed the input again. */
   async function handleSubmit() {
-    if (query.trim().length < 2) return;
+    const trimmed = query.trim();
+    if (trimmed.length < 2) return;
 
-    if (suggestions.length > 0) {
+    if (suggestions.length > 0 && suggestionsQuery === trimmed) {
       const first = suggestions[0];
       goToLocation(first.latitude, first.longitude, first.label);
       return;
     }
 
     try {
-      const res = await fetch(`/api/geocode/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(`/api/geocode/search?q=${encodeURIComponent(trimmed)}`);
       const body = await res.json();
+      if (queryRef.current.trim() !== trimmed) return; // input changed since this request was issued
       const results: Suggestion[] = body.results ?? [];
       if (results.length > 0) {
         goToLocation(results[0].latitude, results[0].longitude, results[0].label);

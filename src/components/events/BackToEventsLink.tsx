@@ -2,20 +2,25 @@
 
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { EVENTS_LIST_RETURN_KEY } from "@/lib/eventsListReturnUrl";
 
-/** Goes back in browser history (preserving whatever filters/view were
- * active) rather than a plain link to "/", which would reset them. Falls
- * back to "/" if there's no in-app history to go back to (e.g. the detail
- * page was opened directly from a shared link). */
+/** Returns to the events list with whatever filters/view were active,
+ * using the URL the list page last recorded (see RecordEventsListUrl)
+ * rather than browser history — history length/referrer can't reliably
+ * tell an in-app previous page from an external one. Falls back to "/" if
+ * no recorded URL exists (e.g. the detail page was opened directly from a
+ * shared link). */
 export function BackToEventsLink() {
   const router = useRouter();
 
   function handleClick() {
-    if (window.history.length > 1) {
-      router.back();
-    } else {
-      router.push("/");
+    let returnUrl: string | null = null;
+    try {
+      returnUrl = sessionStorage.getItem(EVENTS_LIST_RETURN_KEY);
+    } catch {
+      // sessionStorage unavailable — fall back to "/"
     }
+    router.push(returnUrl ?? "/");
   }
 
   return (

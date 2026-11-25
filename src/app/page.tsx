@@ -3,6 +3,7 @@ import { EventMap } from "@/components/map/EventMap";
 import { ViewToggle } from "@/components/view/ViewToggle";
 import { FilterBar } from "@/components/filters/FilterBar";
 import { SortControl } from "@/components/filters/SortControl";
+import { RecordEventsListUrl } from "@/components/events/RecordEventsListUrl";
 import { getEvents, getAssociations } from "@/lib/events/queries";
 import { parseEventSearchParams, type EventSearchParams } from "@/lib/events/filterParams";
 import type { EventCardData } from "@/components/events/EventCard";
@@ -39,6 +40,7 @@ export default async function HomePage({
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-3 px-4 py-6 sm:px-6">
+      <RecordEventsListUrl />
       <FilterBar associations={associations} />
       <div className="flex items-center justify-between">
         <p className="text-sm text-foreground/60">
