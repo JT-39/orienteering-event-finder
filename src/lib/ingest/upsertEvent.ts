@@ -29,10 +29,14 @@ export async function upsertEvent(event: NormalizedEvent, geocode: GeocodeResult
       })
     : null;
 
+  const where = event.source === "BOF" ? { bofNumber: event.bofNumber } : { icsUid: event.icsUid };
+
   return prisma.event.upsert({
-    where: { bofNumber: event.bofNumber },
+    where,
     create: {
+      source: event.source,
       bofNumber: event.bofNumber,
+      icsUid: event.icsUid,
       title: event.title,
       date: event.date,
       level: event.level,

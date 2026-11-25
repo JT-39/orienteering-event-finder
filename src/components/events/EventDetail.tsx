@@ -3,6 +3,7 @@ import { CalendarDays, MapPin, ExternalLink, ArrowLeft, Users } from "lucide-rea
 import { EventMap } from "@/components/map/EventMap";
 import { AddToCalendarButton } from "@/components/events/AddToCalendarButton";
 import { LEVEL_BADGE_CLASS, LEVEL_LABEL } from "@/lib/events/levelStyles";
+import { SOURCE_BADGE_CLASS, SOURCE_LABEL } from "@/lib/events/sourceStyles";
 import type { EventCardData } from "@/components/events/EventCard";
 
 export function EventDetail({ event }: { event: EventCardData }) {
@@ -47,6 +48,11 @@ export function EventDetail({ event }: { event: EventCardData }) {
             <Users className="size-4 text-foreground/50" />
             {event.club?.name ?? "Club TBC"}
             {event.association ? ` · ${event.association.code}` : ""}
+            {event.source === "CLUB_ICS" && (
+              <span className={`rounded-full px-1.5 py-0.5 text-xs ${SOURCE_BADGE_CLASS.CLUB_ICS}`}>
+                {SOURCE_LABEL.CLUB_ICS}
+              </span>
+            )}
           </div>
         </div>
 
