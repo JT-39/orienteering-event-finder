@@ -23,9 +23,15 @@ export function LocationFilter() {
 
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestionsQuery, setSuggestionsQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [locating, setLocating] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const queryRef = useRef(query);
+
+  useEffect(() => {
+    queryRef.current = query;
+  }, [query]);
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
@@ -49,6 +55,7 @@ export function LocationFilter() {
         });
         const body = await res.json();
         setSuggestions(body.results ?? []);
+        setSuggestionsQuery(query.trim());
         setOpen(true);
       } catch {
         // aborted or network hiccup — leave existing suggestions as-is
@@ -71,6 +78,35 @@ export function LocationFilter() {
     );
     setOpen(false);
     setQuery("");
+  }
+
+  /** Lets Enter submit immediately rather than forcing a dropdown pick —
+   * uses the top suggestion already loaded, or fetches fresh if the debounce
+   * hasn't resolved yet (e.g. the user typed and hit Enter quickly). Guards
+   * against two staleness cases: already-loaded suggestions left over from
+   * a since-edited query, and a fresh fetch's response arriving after the
+   * user has already changed the input again. */
+  async function handleSubmit() {
+    const trimmed = query.trim();
+    if (trimmed.length < 2) return;
+
+    if (suggestions.length > 0 && suggestionsQuery === trimmed) {
+      const first = suggestions[0];
+      goToLocation(first.latitude, first.longitude, first.label);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/geocode/search?q=${encodeURIComponent(trimmed)}`);
+      const body = await res.json();
+      if (queryRef.current.trim() !== trimmed) return; // input changed since this request was issued
+      const results: Suggestion[] = body.results ?? [];
+      if (results.length > 0) {
+        goToLocation(results[0].latitude, results[0].longitude, results[0].label);
+      }
+    } catch {
+      // network hiccup — leave the input as-is, user can retry
+    }
   }
 
   function useMyLocation() {
@@ -97,7 +133,9 @@ export function LocationFilter() {
       {hasLocation ? (
         <div className="flex items-center gap-1.5 rounded-lg border border-emerald-600/30 bg-emerald-50 px-2.5 py-1.5 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
           <MapPin className="size-3.5" />
-          <span className="max-w-[8rem] truncate">{searchParams.get("place") ?? "Selected location"}</span>
+          <span className="max-w-[14rem] truncate" title={searchParams.get("place") ?? undefined}>
+            {searchParams.get("place") ?? "Selected location"}
+          </span>
           <select
             value={radius}
             onChange={(e) =>
@@ -122,6 +160,12 @@ export function LocationFilter() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => suggestions.length > 0 && setOpen(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleSubmit();
+              }
+            }}
             placeholder="Postcode or town…"
             className="w-40 rounded-lg border border-black/10 bg-white px-3 py-1.5 text-sm outline-none focus:border-emerald-600 dark:border-white/10 dark:bg-white/5"
           />
@@ -138,7 +182,7 @@ export function LocationFilter() {
       )}
 
       {open && query.trim().length >= 2 && suggestions.length > 0 && (
-        <div className="absolute top-full z-10 mt-1.5 w-64 rounded-lg border border-black/10 bg-white p-1 shadow-lg dark:border-white/10 dark:bg-stone-900">
+        <div className="fixed inset-x-4 top-24 z-20 max-h-[70vh] overflow-y-auto rounded-lg border border-black/10 bg-white p-1 shadow-lg sm:absolute sm:inset-x-auto sm:top-full sm:z-10 sm:mt-1.5 sm:max-h-none sm:w-64 dark:border-white/10 dark:bg-stone-900">
           {suggestions.map((s) => (
             <button
               key={s.label}

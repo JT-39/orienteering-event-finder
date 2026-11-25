@@ -10,6 +10,7 @@ export interface EventSearchParams {
   lat?: string;
   lng?: string;
   radius?: string;
+  sort?: string;
   page?: string;
   view?: string;
   place?: string;
@@ -47,6 +48,10 @@ export function parseEventSearchParams(params: EventSearchParams): EventFilters 
   }
 
   if (params.page) filters.page = Number(params.page);
+
+  if (params.sort === "date" || params.sort === "distance") {
+    filters.sort = params.sort;
+  }
 
   return filters;
 }
