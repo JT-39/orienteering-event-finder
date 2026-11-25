@@ -6,7 +6,8 @@ event detail pages, and .ics calendar export.
 
 Built with Next.js (App Router, TypeScript), Postgres via Prisma, and
 MapLibre + free OpenStreetMap-based tiles (no API key required). Event data
-comes from British Orienteering's public fixtures feed.
+comes from British Orienteering's public fixtures feed, plus individual
+clubs' own calendar feeds where available (see "Club calendar feeds" below).
 
 ## Getting started (local dev)
 
@@ -53,6 +54,26 @@ coordinates) if `api.postcodes.io` / `nominatim.openstreetmap.org` aren't
 reachable — it never overwrites existing coordinates on failure, so it's
 always safe to re-run.
 
+## Club calendar feeds
+
+Some clubs run events (training series, club championships) that never get
+submitted to the national BOF calendar. Where a club publishes its own
+iCalendar (.ics) feed, `pnpm ingest` pulls that in too — configured in
+`src/lib/ingest/clubFeeds.ts` (currently just South London Orienteers;
+adding another club is a new entry there, no code changes). Recurring
+events (RRULE) are expanded automatically. Events that look like they
+duplicate something already in the DB via the official BOF feed (same date,
+similar title/venue — see `src/lib/ingest/dedupeClubEvent.ts`) are skipped
+rather than creating a second card; club-sourced events that do get in show
+a "Club calendar" badge. They always get `level = UNKNOWN` ("Level TBC")
+since club calendars don't carry BOF's grading.
+
+For an offline dry run against a local .ics file instead of the real feed:
+
+```bash
+pnpm exec tsx scripts/ingest.ts --ics-file=SLOW=prisma/seed-data/slow.mock.ics
+```
+
 ## Deploying (Vercel + Neon, via GitHub Actions)
 
 `.github/workflows/deploy.yml` builds and deploys the app to Vercel on every
@@ -85,8 +106,11 @@ One-time setup:
 
 ## Project structure
 
-- `prisma/schema.prisma` — `Event`, `Club`, `Association`, `GeocodeCache` models.
-- `src/lib/ingest/` — fetch + normalize logic, shared by both the seed script and `pnpm ingest`.
+- `prisma/schema.prisma` — `Event` (sourced from either BOF or a club's own
+  ICS feed, tracked via `source`/`bofNumber`/`icsUid`), `Club`, `Association`,
+  `GeocodeCache` models.
+- `src/lib/ingest/` — fetch + normalize logic for both sources, shared by the
+  seed script and `pnpm ingest`.
 - `src/lib/geocode/` — postcodes.io / Nominatim clients + the geocode cache.
 - `src/lib/events/queries.ts` — shared filtering/query logic used by pages and the `/api/events` route.
 - `src/components/map/EventMap.tsx` — MapLibre map view.

@@ -54,7 +54,7 @@ export function parseFixtureDate(raw: unknown): Date | null {
  * has been observed coming through as a JSON number) — coerce defensively
  * rather than trust the declared type, since that's only a compile-time
  * assumption, not a runtime guarantee for an external feed. */
-function cleanString(value: unknown): string | null {
+export function cleanString(value: unknown): string | null {
   if (value == null) return null;
   const trimmed = String(value).trim();
   return trimmed ? trimmed : null;
@@ -78,7 +78,9 @@ export function normalizeFixture(raw: RawFixture): NormalizedEvent | null {
   }
 
   return {
+    source: "BOF",
     bofNumber: number,
+    icsUid: null,
     title,
     date,
     level: parseLevel(raw.level),

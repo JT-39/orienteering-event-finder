@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { MapPin, CalendarDays } from "lucide-react";
 import { LEVEL_BADGE_CLASS, LEVEL_LABEL } from "@/lib/events/levelStyles";
-import type { EventLevel } from "@/generated/prisma/enums";
+import { SOURCE_BADGE_CLASS, SOURCE_LABEL } from "@/lib/events/sourceStyles";
+import type { EventLevel, EventSource } from "@/generated/prisma/enums";
 
 export interface EventCardData {
   id: string;
   title: string;
   date: Date;
   level: EventLevel;
+  source: EventSource;
   venue: string | null;
   nearestTown: string | null;
   club: { name: string } | null;
@@ -56,7 +58,14 @@ export function EventCard({ event }: { event: EventCardData }) {
       </div>
 
       <div className="mt-3 flex items-center justify-between text-xs text-foreground/50">
-        <span>{event.club?.name ?? "Club TBC"}</span>
+        <span className="flex items-center gap-1.5">
+          {event.club?.name ?? "Club TBC"}
+          {event.source === "CLUB_ICS" && (
+            <span className={`rounded-full px-1.5 py-0.5 ${SOURCE_BADGE_CLASS.CLUB_ICS}`}>
+              {SOURCE_LABEL.CLUB_ICS}
+            </span>
+          )}
+        </span>
         <span>
           {event.association?.code}
           {event.distanceKm != null ? ` · ${event.distanceKm.toFixed(1)} km away` : ""}

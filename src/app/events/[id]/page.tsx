@@ -20,6 +20,7 @@ export default async function EventDetailPage({
           title: event.title,
           date: event.date,
           level: event.level,
+          source: event.source,
           venue: event.venue,
           nearestTown: event.nearestTown,
           club: event.club,
