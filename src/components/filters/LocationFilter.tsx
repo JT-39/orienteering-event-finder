@@ -121,7 +121,9 @@ export function LocationFilter() {
       {hasLocation ? (
         <div className="flex items-center gap-1.5 rounded-lg border border-emerald-600/30 bg-emerald-50 px-2.5 py-1.5 text-sm text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
           <MapPin className="size-3.5" />
-          <span className="max-w-[8rem] truncate">{searchParams.get("place") ?? "Selected location"}</span>
+          <span className="max-w-[14rem] truncate" title={searchParams.get("place") ?? undefined}>
+            {searchParams.get("place") ?? "Selected location"}
+          </span>
           <select
             value={radius}
             onChange={(e) =>
@@ -168,7 +170,7 @@ export function LocationFilter() {
       )}
 
       {open && query.trim().length >= 2 && suggestions.length > 0 && (
-        <div className="absolute top-full z-10 mt-1.5 w-64 rounded-lg border border-black/10 bg-white p-1 shadow-lg dark:border-white/10 dark:bg-stone-900">
+        <div className="fixed inset-x-4 top-24 z-20 max-h-[70vh] overflow-y-auto rounded-lg border border-black/10 bg-white p-1 shadow-lg sm:absolute sm:inset-x-auto sm:top-full sm:z-10 sm:mt-1.5 sm:max-h-none sm:w-64 dark:border-white/10 dark:bg-stone-900">
           {suggestions.map((s) => (
             <button
               key={s.label}

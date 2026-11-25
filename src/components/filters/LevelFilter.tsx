@@ -32,7 +32,7 @@ export function LevelFilter() {
         {label}
         <ChevronDown className="size-3.5 text-foreground/50 transition group-open:rotate-180" />
       </summary>
-      <div className="absolute z-10 mt-1.5 w-44 rounded-lg border border-black/10 bg-white p-2 shadow-lg dark:border-white/10 dark:bg-stone-900">
+      <div className="fixed inset-x-4 top-24 z-20 max-h-[70vh] overflow-y-auto rounded-lg border border-black/10 bg-white p-2 shadow-lg sm:absolute sm:inset-x-auto sm:top-full sm:left-0 sm:z-10 sm:mt-1.5 sm:max-h-64 sm:w-44 dark:border-white/10 dark:bg-stone-900">
         {LEVELS.map((level) => (
           <label
             key={level}

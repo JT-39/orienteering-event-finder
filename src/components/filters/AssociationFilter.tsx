@@ -34,7 +34,7 @@ export function AssociationFilter({
         {label}
         <ChevronDown className="size-3.5 text-foreground/50 transition group-open:rotate-180" />
       </summary>
-      <div className="absolute z-10 mt-1.5 max-h-64 w-64 overflow-y-auto rounded-lg border border-black/10 bg-white p-2 shadow-lg dark:border-white/10 dark:bg-stone-900">
+      <div className="fixed inset-x-4 top-24 z-20 max-h-[70vh] overflow-y-auto rounded-lg border border-black/10 bg-white p-2 shadow-lg sm:absolute sm:inset-x-auto sm:top-full sm:left-0 sm:z-10 sm:mt-1.5 sm:max-h-64 sm:w-64 dark:border-white/10 dark:bg-stone-900">
         {associations.map((assoc) => (
           <label
             key={assoc.code}
