@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: TEMP debug association coverage
+        run: pnpm exec tsx scripts/debug-assoc.ts
+
       - name: Run ingestion
         run: pnpm ingest
         env:
