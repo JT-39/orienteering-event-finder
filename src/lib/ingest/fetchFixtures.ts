@@ -30,10 +30,12 @@ async function fetchWithRetry(url: string): Promise<RawFixture[]> {
   throw lastError instanceof Error ? lastError : new Error(String(lastError));
 }
 
-/** Fetches fixtures for one association code, or UK-wide if omitted.
- * BOF's `fixturesjson.php` hasn't been confirmed to return every association
- * when called with no `assoc` param — if UK-wide data turns out incomplete,
- * fall back to looping `associations.ts` and calling this once per code. */
+/** Fetches fixtures for one association code, or unparametrized if omitted.
+ * Confirmed against the real feed: the unparametrized call doesn't return
+ * UK-wide data — it silently scopes to a single association (observed:
+ * everything came back tagged SEOA) while still returning a large,
+ * healthy-looking result set. `scripts/ingest.ts` always loops
+ * `associations.ts` and calls this once per code instead of relying on it. */
 export async function fetchFixturesFor(assocCode?: string): Promise<RawFixture[]> {
   const url = assocCode ? `${BASE_URL}?assoc=${encodeURIComponent(assocCode)}` : BASE_URL;
   const fixtures = await fetchWithRetry(url);
