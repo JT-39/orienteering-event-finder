@@ -88,7 +88,7 @@ export function normalizeFixture(raw: RawFixture): NormalizedEvent | null {
     venue: cleanString(raw.venue),
     nearestTown: cleanString(raw.nearest_town),
     eventWebsite: cleanString(raw.event_specific_website),
-    associationCode: cleanString(raw.assoc)?.toUpperCase() ?? null,
+    associationCode: cleanString(raw.association)?.toUpperCase() ?? null,
     clubName: cleanString(raw.club),
     rawPayload: raw,
   };

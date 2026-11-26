@@ -8,7 +8,7 @@
     "venue": "Sherwood Pines Forest Park",
     "nearest_town": "Edwinstowe",
     "event_specific_website": "https://www.notts-orienteers.org.uk/events/sherwood-pines-2026",
-    "assoc": "EMOA",
+    "association": "EMOA",
     "lat": 53.1885,
     "lng": -1.0721
   },
@@ -21,7 +21,7 @@
     "venue": "Cannock Chase Country Park",
     "nearest_town": "Rugeley",
     "event_specific_website": "https://www.waltonchasers.org.uk/fixtures/cannock-2026",
-    "assoc": "WMOA",
+    "association": "WMOA",
     "lat": 52.741,
     "lng": -2.031
   },
@@ -34,7 +34,7 @@
     "venue": "Cwmcarn Forest Drive",
     "nearest_town": "Cwmcarn",
     "event_specific_website": "https://www.goc.org.uk/events/cwmcarn-regionals-2026",
-    "assoc": "WOA",
+    "association": "WOA",
     "lat": 51.663,
     "lng": -3.147
   },
@@ -47,7 +47,7 @@
     "venue": "Longshaw Estate",
     "nearest_town": "Hathersage",
     "event_specific_website": "https://www.sayo.org.uk/fixtures/longshaw-2026",
-    "assoc": "YHOA",
+    "association": "YHOA",
     "lat": 53.318,
     "lng": -1.622
   },
@@ -60,7 +60,7 @@
     "venue": "Epping Forest, High Beach",
     "nearest_town": "Loughton",
     "event_specific_website": "https://www.eppingforestoc.org.uk/events/night-2026",
-    "assoc": "SEOA",
+    "association": "SEOA",
     "lat": 51.652,
     "lng": 0.0339
   },
@@ -73,7 +73,7 @@
     "venue": "New Forest, Bolderwood",
     "nearest_town": "Lyndhurst",
     "event_specific_website": "https://www.southamptonorienteers.org.uk/events/new-forest-national-2026",
-    "assoc": "SEOA",
+    "association": "SEOA",
     "lat": 50.879,
     "lng": -1.634
   },
@@ -86,7 +86,7 @@
     "venue": "Rivington Pike",
     "nearest_town": "Horwich",
     "event_specific_website": "https://www.mdoc.org.uk/fixtures/rivington-2026",
-    "assoc": "NWOA",
+    "association": "NWOA",
     "lat": 53.618,
     "lng": -2.54
   },
@@ -99,7 +99,7 @@
     "venue": "Holyrood Park",
     "nearest_town": "Edinburgh",
     "event_specific_website": "https://www.interlopers.org.uk/events/holyrood-sprint-2026",
-    "assoc": "SOA",
+    "association": "SOA",
     "lat": 55.9436,
     "lng": -3.1618
   },
@@ -112,7 +112,7 @@
     "venue": "Malvern Hills, North End",
     "nearest_town": "Great Malvern",
     "event_specific_website": "https://www.merciaorienteers.org.uk/fixtures/malvern-2026",
-    "assoc": "WMOA",
+    "association": "WMOA",
     "lat": 52.087,
     "lng": -2.334
   },
@@ -125,7 +125,7 @@
     "venue": "Delamere Forest",
     "nearest_town": "Northwich",
     "event_specific_website": "https://www.cheshireoc.org.uk/events/delamere-2026",
-    "assoc": "NWOA",
+    "association": "NWOA",
     "lat": 53.221,
     "lng": -2.667
   },
@@ -138,7 +138,7 @@
     "venue": "Cannon Hill Park",
     "nearest_town": "Birmingham",
     "event_specific_website": "https://www.buoc.org.uk/events/cannon-hill-2026",
-    "assoc": "WMOA",
+    "association": "WMOA",
     "lat": 52.448,
     "lng": -1.903
   },
@@ -151,7 +151,7 @@
     "venue": "Sutton Park",
     "nearest_town": "Sutton Coldfield",
     "event_specific_website": "https://www.waltonchasers.org.uk/fixtures/sutton-park-2026",
-    "assoc": "WMOA",
+    "association": "WMOA",
     "lat": 52.5703,
     "lng": -1.8339
   },
@@ -164,7 +164,7 @@
     "venue": "Clumber Park",
     "nearest_town": "Worksop",
     "event_specific_website": "https://www.notts-orienteers.org.uk/events/clumber-2026",
-    "assoc": "EMOA",
+    "association": "EMOA",
     "lat": 53.2,
     "lng": -1.05
   },
@@ -177,7 +177,7 @@
     "venue": "Chatsworth Estate",
     "nearest_town": "Bakewell",
     "event_specific_website": "https://www.dvo.org.uk/events/chatsworth-jk-2026",
-    "assoc": "EMOA",
+    "association": "EMOA",
     "lat": 53.2273,
     "lng": -1.6103
   },
@@ -190,7 +190,7 @@
     "venue": "Craigellachie Nature Reserve",
     "nearest_town": "Aviemore",
     "event_specific_website": "https://www.moravianoc.org.uk/events/aviemore-2026",
-    "assoc": "SOA",
+    "association": "SOA",
     "lat": 57.193,
     "lng": -3.8264
   },
@@ -203,7 +203,7 @@
     "venue": "Craigavon Lakes",
     "nearest_town": "Craigavon",
     "event_specific_website": "https://www.lvo.org.uk/fixtures/craigavon-2026",
-    "assoc": "NIOA",
+    "association": "NIOA",
     "lat": 54.4488,
     "lng": -6.3873
   },
@@ -216,7 +216,7 @@
     "venue": "Guildford Town Centre",
     "nearest_town": "Guildford",
     "event_specific_website": "https://www.slow.org.uk/events/guildford-urban-2026",
-    "assoc": "SEOA",
+    "association": "SEOA",
     "lat": 51.2362,
     "lng": -0.5704
   },
@@ -229,7 +229,7 @@
     "venue": "Cardiff Bay",
     "nearest_town": "Cardiff",
     "event_specific_website": "https://www.goc.org.uk/events/cardiff-bay-sprint-2026",
-    "assoc": "WOA",
+    "association": "WOA",
     "lat": 51.4626,
     "lng": -3.1666
   },
@@ -242,7 +242,7 @@
     "venue": "venue TBC - check club website",
     "nearest_town": "somewhere near Sheffield",
     "event_specific_website": "https://www.sayo.org.uk/fixtures/taster-2026",
-    "assoc": "YHOA",
+    "association": "YHOA",
     "lat": null,
     "lng": null
   },
@@ -255,7 +255,7 @@
     "venue": "TBC",
     "nearest_town": "TBC",
     "event_specific_website": "https://www.nvo.org.uk/events/night-o-round3-2026",
-    "assoc": "EMOA",
+    "association": "EMOA",
     "lat": null,
     "lng": null
   }

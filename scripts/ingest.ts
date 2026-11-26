@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { readFile } from "node:fs/promises";
-import { fetchAllFixturesByAssociation } from "@/lib/ingest/fetchFixtures";
+import { fetchFixturesFor, fetchAllFixturesByAssociation } from "@/lib/ingest/fetchFixtures";
 import { normalizeFixture } from "@/lib/ingest/normalize";
 import { geocodeVenue } from "@/lib/geocode/geocodeFixture";
 import { upsertEvent } from "@/lib/ingest/upsertEvent";
@@ -35,12 +35,10 @@ async function loadFixtures(): Promise<RawFixture[]> {
     return JSON.parse(contents);
   }
 
-  // Confirmed against the real feed: the unparametrized endpoint doesn't
-  // error or return nothing when it can't give UK-wide results — it silently
-  // scoped every fixture to a single association (SEOA) instead, which
-  // looked like a full, healthy fetch (937 rows) but wasn't. There's no
-  // reliable signal to detect that from the response alone, so always fetch
-  // per-association and merge instead of trusting the unparametrized call.
+  const ukWide = await fetchFixturesFor();
+  if (ukWide.length > 0) return ukWide;
+
+  console.warn("[ingest] unparametrized fetch returned no fixtures, falling back to per-association fetch");
   return fetchAllFixturesByAssociation(Object.keys(ASSOCIATIONS));
 }
 
