@@ -11,5 +11,5 @@ export interface RawFixture {
   venue: unknown;
   nearest_town: unknown;
   event_specific_website: unknown;
-  assoc?: unknown;
+  association?: unknown;
 }

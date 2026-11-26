@@ -3,8 +3,9 @@ import { EventSource } from "@/generated/prisma/enums";
 import type { NormalizedEvent } from "@/lib/events/types";
 
 const DATE_WINDOW_DAYS = 1; // guards against timezone/all-day boundary slop between feeds
-const TITLE_OVERLAP_THRESHOLD = 0.5; // fraction of the shorter title's tokens that must match
-const STOPWORDS = new Set(["orienteering", "event", "the", "and", "at", "on", "of", "a", "for"]);
+const TITLE_OVERLAP_THRESHOLD = 0.5;
+const VENUE_OVERLAP_THRESHOLD = 0.5;
+const STOPWORDS = new Set(["orienteering", "event", "events", "the", "and", "at", "on", "of", "a", "for"]);
 
 function tokenize(text: string): Set<string> {
   return new Set(
@@ -16,11 +17,18 @@ function tokenize(text: string): Set<string> {
   );
 }
 
+/** True Jaccard similarity (intersection / union). Against the real feed,
+ * dividing by the smaller set's size instead of the union massively
+ * overcounted similarity — e.g. "SLOW Street-O" (tokens: slow, street)
+ * vs. "MDOC Night Street League" (tokens: mdoc, night, street, league)
+ * shares only "street", but 1/min(2,4) = 0.5 crossed the old threshold.
+ * With the union (1/5 = 0.2) it correctly doesn't. */
 function jaccardOverlap(a: Set<string>, b: Set<string>): number {
   if (a.size === 0 || b.size === 0) return 0;
   let shared = 0;
   for (const token of a) if (b.has(token)) shared++;
-  return shared / Math.min(a.size, b.size);
+  const union = a.size + b.size - shared;
+  return shared / union;
 }
 
 function addDays(date: Date, days: number): Date {
@@ -33,8 +41,9 @@ function addDays(date: Date, days: number): Date {
  * Checks whether a club-feed event likely duplicates an existing
  * BOF-sourced event (same real-world event, submitted to both the national
  * calendar and the club's own site). Deliberately simple — same-day title
- * token overlap or a shared venue token — not meant to be bulletproof, just
- * good enough to avoid obvious duplicate cards in the UI.
+ * or venue token overlap, both scored with the same Jaccard threshold — not
+ * meant to be bulletproof, just good enough to avoid obvious duplicate
+ * cards in the UI without also hiding genuinely distinct events.
  */
 export async function findLikelyDuplicate(
   event: Extract<NormalizedEvent, { source: "CLUB_ICS" }>,
@@ -55,9 +64,8 @@ export async function findLikelyDuplicate(
       return candidate;
     }
     if (targetVenueTokens && candidate.venue) {
-      const candidateVenueTokens = tokenize(candidate.venue);
-      for (const token of targetVenueTokens) {
-        if (candidateVenueTokens.has(token)) return candidate;
+      if (jaccardOverlap(targetVenueTokens, tokenize(candidate.venue)) >= VENUE_OVERLAP_THRESHOLD) {
+        return candidate;
       }
     }
   }

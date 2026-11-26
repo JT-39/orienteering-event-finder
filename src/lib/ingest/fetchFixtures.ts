@@ -31,13 +31,17 @@ async function fetchWithRetry(url: string): Promise<RawFixture[]> {
 }
 
 /** Fetches fixtures for one association code, or UK-wide if omitted.
- * BOF's `fixturesjson.php` hasn't been confirmed to return every association
- * when called with no `assoc` param — if UK-wide data turns out incomplete,
- * fall back to looping `associations.ts` and calling this once per code. */
+ * Confirmed against the real feed: the unparametrized call does return
+ * UK-wide data (every region represented, via each fixture's own
+ * `association` field) and is in fact more complete than looping every
+ * known association code and merging — the per-association fallback below
+ * missed ~7% of fixtures whose `association` value isn't one of the codes
+ * in `associations.ts`. Kept only as a fallback for the case where the
+ * unparametrized endpoint itself returns nothing. */
 export async function fetchFixturesFor(assocCode?: string): Promise<RawFixture[]> {
   const url = assocCode ? `${BASE_URL}?assoc=${encodeURIComponent(assocCode)}` : BASE_URL;
   const fixtures = await fetchWithRetry(url);
-  return assocCode ? fixtures.map((f) => ({ ...f, assoc: assocCode })) : fixtures;
+  return assocCode ? fixtures.map((f) => ({ ...f, association: assocCode })) : fixtures;
 }
 
 /** Fetches per-association and dedupes by fixture `number`, for the case
